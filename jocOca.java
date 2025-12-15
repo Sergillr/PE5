@@ -38,6 +38,7 @@ public class jocOca {
         skip = new int[numPlayers];
 
         getPlayersName();
+        chooseFirstPlayer();
         mainGame();
 
         int winnerIndex = (turn - 1) % numPlayers;
@@ -76,6 +77,25 @@ public class jocOca {
             numPlayers = scan.nextInt();
         } while (numPlayers < 2 || numPlayers > 4);
     }
+
+    static void chooseFirstPlayer() {
+        int maxSum = -1;
+        int first = 0;
+
+        for (int i = 0; i < numPlayers; i++) {
+            System.out.println(BLUE + "\n" + names[i] + " tira dos dados para decidir el orden." + RESET);
+            int sum  = rollDice(i);
+
+            if (sum > maxSum) {
+                maxSum = sum;
+                first = i;
+            }
+        }
+
+        turn = first;
+        System.out.println(PURPLE + "\nEmpieza la partida: " + names[first] + RESET);
+    }
+
     // MÈTODES DELS TURNS
     static void playTurn(int player) {
         // COMPROVACIÓ DE PÈRDUA DE TURNOS
