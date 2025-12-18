@@ -1,5 +1,6 @@
 import java.util.Scanner;
-
+import java.util.InputMismatchException;
+import java.lang.IllegalStateException;
 public class jocOca {
 
     // COLORS ANSI
@@ -30,19 +31,29 @@ public class jocOca {
     // MÈTODE PRINCIPAL
     public static void main(String[] args) {
 
-        getNumberPlayers();
-        scan.nextLine();
+        try {
+            getNumberPlayers();
+            scan.nextLine();
 
-        names = new String[numPlayers];
-        positions = new int[numPlayers];
-        skip = new int[numPlayers];
+            names = new String[numPlayers];
+            positions = new int[numPlayers];
+            skip = new int[numPlayers];
 
-        getPlayersName();
-        chooseFirstPlayer();
-        mainGame();
+            getPlayersName();
+            chooseFirstPlayer();
+            mainGame();
 
-        int winnerIndex = (turn - 1) % numPlayers;
-        System.out.println(PURPLE + "\n¡¡" + names[winnerIndex] + " ha ganado la partida!!" + RESET);
+            int winnerIndex = (turn - 1) % numPlayers;
+            System.out.println(PURPLE + "\n¡¡" + names[winnerIndex] + " ha ganado la partida!!" + RESET);
+        } catch (InputMismatchException e) {
+            System.out.println(RED + "Entrada inválida." + RESET);
+        } catch (IllegalStateException e) {
+            System.out.println(RED + "Scanner cerrado incorrectamente." + RESET);
+        } catch (ArithmeticException e) {
+            System.out.println(RED + "Error aritmético." + RESET);
+        } catch (Exception e) {
+            System.out.println(RED + "Error inesperado. Fin del juego." + RESET);
+        }
     }
 
     // BUCLE PRINCIPAL DEL JOC
@@ -62,20 +73,48 @@ public class jocOca {
             turn++;
         }
     }
+
     // MÈTODES D'INICIALITZACIÓ
     private static void getPlayersName() {
         for (int i = 0; i < numPlayers; i++) {
-            System.out.print("Nombre del jugador " + (i + 1) + ": ");
-            names[i] = scan.nextLine();
+            boolean ok = false;
+            do {
+                try {
+                    System.out.print("Nombre del jugador " + (i + 1) + ": ");
+                    names[i] = scan.nextLine();
+                    ok = true;
+                } catch (InputMismatchException e) {
+                    scan.nextLine();
+                } catch (IllegalStateException e) {
+                    scan.nextLine();
+                } catch (Exception e) {
+                    scan.nextLine();
+                }
+            } while (!ok);
         }
     }
 
     // MÈTODES DEL JOC
     private static void getNumberPlayers() {
+        boolean ok;
         do {
-            System.out.print("Número de jugadores (2 a 4): ");
-            numPlayers = scan.nextInt();
-        } while (numPlayers < 2 || numPlayers > 4);
+            ok = true;
+            try {
+                System.out.print("Número de jugadores (2 a 4): ");
+                numPlayers = scan.nextInt();
+            } catch (InputMismatchException e) {
+                scan.nextLine();
+                ok = false;
+                numPlayers = 0;
+            } catch (IllegalStateException e) {
+                ok = false;
+                numPlayers = 0;
+            } catch (Exception e) {
+                scan.nextLine();
+                ok = false;
+                numPlayers = 0;
+            }
+        } while (!ok || numPlayers < 2 || numPlayers > 4);
     }
 
     static void chooseFirstPlayer() {
@@ -84,7 +123,7 @@ public class jocOca {
 
         for (int i = 0; i < numPlayers; i++) {
             System.out.println(BLUE + "\n" + names[i] + " tira dos dados para decidir el orden." + RESET);
-            int sum  = rollDice(i);
+            int sum = rollDice(i);
 
             if (sum > maxSum) {
                 maxSum = sum;
@@ -122,16 +161,32 @@ public class jocOca {
         int sum = 0;
         // TIRADA AMB UN SOL DAU A PARTIR DE LA CASILLA 60
         if (currentPosition >= 60) {
-            System.out.print(BLUE + "Casilla " + currentPosition + ": tiras 1 dado..." + RESET);
-            scan.nextLine();
+            try {
+                System.out.print(BLUE + "Casilla " + currentPosition + ": tiras 1 dado..." + RESET);
+                scan.nextLine();
+            } catch (InputMismatchException e) {
+                scan.nextLine();
+            } catch (IllegalStateException e) {
+                scan.nextLine();
+            } catch (Exception e) {
+                scan.nextLine();
+            }
             int d = rollSingleDie();
             System.out.println(BLUE + "Dado: " + d + RESET);
             return d;
         }
         // TIRADA AMB DOS DAUS
         for (int i = 1; i <= 2; i++) {
-            System.out.print(BLUE + "Pulsa ENTER para tirar el dado " + i + "..." + RESET);
-            scan.nextLine();
+            try {
+                System.out.print(BLUE + "Pulsa ENTER para tirar el dado " + i + "..." + RESET);
+                scan.nextLine();
+            } catch (InputMismatchException e) {
+                scan.nextLine();
+            } catch (IllegalStateException e) {
+                scan.nextLine();
+            } catch (Exception e) {
+                scan.nextLine();
+            }
             int d = rollSingleDie();
             System.out.println(BLUE + "Dado " + i + ": " + d + RESET);
             sum += d;
